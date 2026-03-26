@@ -1,0 +1,138 @@
+{
+    "name": "SilverLayer_Notebook_Execution",
+    "properties": {
+        "activities": [
+            {
+                "name": "Branch Notebook",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Agent Notebook",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/vinay@standupudhaygmail.onmicrosoft.com/SilverLayer_Implementation/SliverLayer-DataLoad/Ingestion_BranchData"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks_LS",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Customer Notebook",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Branch Notebook",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/vinay@standupudhaygmail.onmicrosoft.com/SilverLayer_Implementation/SliverLayer-DataLoad/Ingestion_CustomerData"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks_LS",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Claim Notebook",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Customer Notebook",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/vinay@standupudhaygmail.onmicrosoft.com/SilverLayer_Implementation/SliverLayer-DataLoad/Ingestion_ClaimData"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks_LS",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Agent Notebook",
+                "type": "DatabricksNotebook",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/vinay@standupudhaygmail.onmicrosoft.com/SilverLayer_Implementation/SliverLayer-DataLoad/Ingestion_AgentData"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks_LS",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "Policy Notebook",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "Claim Notebook",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/vinay@standupudhaygmail.onmicrosoft.com/SilverLayer_Implementation/SliverLayer-DataLoad/Ingestion_PolicyData"
+                },
+                "linkedServiceName": {
+                    "referenceName": "AzureDatabricks_LS",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2026-03-21T14:12:13Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,6 @@
+selected resource name:		Ingest_Agent_data
+selected resource type:		pipeline
+factory name:			SmartPloicySystemADF
+factory location:		eastus
+subscription id:		c683ddae-4c3c-4fbd-a332-fba272ba6d96
+time of download (UTC):		Sat, 21 Mar 2026 14:55:20 GMT
