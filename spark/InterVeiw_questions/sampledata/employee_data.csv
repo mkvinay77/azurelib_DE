@@ -1,0 +1,21 @@
+emp_id,name,department,salary,email,city,experience
+101,Vinay,Data Engineering,55000,vinay@gmail.com,Bangalore,3
+102,Rahul,,60000,rahul@gmail.com,Hyderabad,4
+103,Anu,Analytics,,anu@gmail.com,Chennai,2
+104,,Data Engineering,72000,,Pune,5
+105,Kiran,Support,45000,kiran@gmail.com,Mumbai,3
+106,Sneha,,,,Delhi,1
+107,Amit,Analytics,58000,amit@gmail.com,Bangalore,4
+108,Priya,Data Engineering,NULL,priya@gmail.com,Chennai,3
+109,NULL,Support,50000,,Hyderabad,2
+110,Ravi,Analytics,62000,ravi@gmail.com,Bangalore,5
+111,Megha,Support,47000,megha@gmail.com,,2
+112,Arjun,,53000,arjun@gmail.com,Pune,
+113,Kavya,Analytics,61000,NULL,Mumbai,4
+114,Rohit,Data Engineering,69000,rohit@gmail.com,Delhi,5
+115,,Support,NULL,,Chennai,1
+116,Neha,Analytics,57000,neha@gmail.com,Bangalore,3
+117,Suresh,Support,44000,suresh@gmail.com,NULL,2
+118,Divya,Data Engineering,75000,divya@gmail.com,Hyderabad,6
+119,Karthik,,,karthik@gmail.com,Pune,2
+120,Pooja,Analytics,59000,pooja@gmail.com,Bangalore,NULL
