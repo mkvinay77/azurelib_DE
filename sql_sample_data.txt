@@ -1,0 +1,147 @@
+Work on MYSQL:
+
+
+1st section-
+
+employee_details
+----------------
+EmpId
+first_name
+last_name
+department
+joining_date
+city
+manager_id
+
+employee_salary
+---------------
+EmpId
+salary
+bonus
+effective_date
+
+CREATE TABLE employee_details (
+    EmpId INT PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    department VARCHAR(30),
+    joining_date DATE,
+    city VARCHAR(30),
+    manager_id INT
+);
+
+CREATE TABLE employee_salary (
+    EmpId INT,
+    salary DECIMAL(10,2),
+    bonus DECIMAL(10,2),
+    effective_date DATE
+);
+
+INSERT INTO employee_details VALUES
+(101,'Vinay','Kumar','IT','2022-01-15','Bangalore',105),
+(102,'John','Doe','IT','2021-06-10','Chennai',105),
+(103,'Priya','Sharma','HR','2023-03-20','Mumbai',106),
+(104,'Rahul','Verma','Finance','2020-09-12','Delhi',106),
+(105,'Anita','Reddy','IT','2018-04-01','Bangalore',107),
+(106,'Kiran','Patel','HR','2019-07-08','Pune',107),
+(107,'Suresh','Nair','Administration','2015-01-01','Bangalore',NULL),
+(108,'Neha','Singh','IT','2024-02-05','Hyderabad',105),
+(109,'Amit','Gupta','Finance','2023-10-18','Delhi',104),
+(110,'Kavya','Iyer','HR','2022-11-25','Chennai',106);
+
+INSERT INTO employee_salary VALUES
+(101,50000,5000,'2025-09-01'),
+(102,45000,3000,'2025-09-01'),
+(103,55000,4000,'2025-09-01'),
+(104,60000,6000,'2025-09-01'),
+(105,90000,10000,'2025-09-01'),
+(106,85000,9000,'2025-09-01'),
+(107,120000,15000,'2025-09-01'),
+(108,52000,4000,'2025-09-01'),
+(109,48000,3500,'2025-09-01'),
+(110,53000,4200,'2025-09-01');
+
+
+
+
+
+1. Display employee and manager IDs
+(select EmpId,manager_id from employee_details)
+
+2.employees who joined in year 2020
+(select EmpId from employee_details where year(joining_date) =2020 )
+
+3.Employee IDs present in either table
+(select EmpId from employee_details 
+    UNION
+  select EmpId from employee_salary)
+
+4.Return all employees from employee_details, even if no salary record exists.
+(SELECT e.*,
+       s.salary
+FROM employee_details e
+LEFT JOIN employee_salary s
+ON e.emp_id = s.emp_id;)
+
+5.Return only employees having a matching salary record
+(SELECT e.emp_id,
+       first_name,
+       last_name,
+       city,
+       salary
+FROM employee_details e
+JOIN employee_salary s
+ON e.emp_id = s.emp_id;)
+
+
+2nd type:
+Sample Table:   
+CREATE TABLE Books ( 
+    BookId        NUMBER PRIMARY KEY, 
+    Author        VARCHAR2(100), 
+    PublishedYear NUMBER(4) 
+); 
+CREATE TABLE Borrowers ( 
+    BorrowerId      NUMBER PRIMARY KEY, 
+    FirstName       VARCHAR2(50), 
+    LastName        VARCHAR2(50), 
+    BorrowedBookId  NUMBER, 
+    CONSTRAINT fk_borrowed_book 
+        FOREIGN KEY (BorrowedBookId) 
+        REFERENCES Books(BookId) 
+); 
+ 
+Sample Data: 
+INSERT INTO Books (BookId, Author, PublishedYear) 
+VALUES (101, 'R.K. Narayan', 1958); 
+ 
+INSERT INTO Books (BookId, Author, PublishedYear) 
+VALUES (102, 'George Orwell', 1949); 
+ 
+INSERT INTO Books (BookId, Author, PublishedYear) 
+VALUES (103, 'J.K. Rowling', 1997); 
+ 
+INSERT INTO Books (BookId, Author, PublishedYear) 
+VALUES (104, 'Dan Brown', 2003); 
+INSERT INTO Books (BookId, Author, PublishedYear) 
+VALUES (105, 'Chetan Bhagat', 2004); 
+INSERT INTO Borrowers (BorrowerId, FirstName, LastName, BorrowedBookId) 
+VALUES (1, 'Arun', 'Kumar', 101); 
+INSERT INTO Borrowers (BorrowerId, FirstName, LastName, BorrowedBookId) 
+VALUES (2, 'Priya', 'Sharma', 103); 
+INSERT INTO Borrowers (BorrowerId, FirstName, LastName, BorrowedBookId) 
+VALUES (3, 'Rahul', 'Raj', 102); 
+INSERT INTO Borrowers (BorrowerId, FirstName, LastName, BorrowedBookId) 
+VALUES (4, 'Divya', 'Krishnan', 105); 
+INSERT INTO Borrowers (BorrowerId, FirstName, LastName, BorrowedBookId) 
+VALUES (5, 'Karthik', 'Mohan', NULL); 
+Questions: 
+1 – select BookId & Author from Books table 
+2 – select Books whose published year is less than 2000 
+3 – select Books which have been borrowed by Borrowers 
+4 – select distinct values after join 
+5 – select Borrower Name, Book name even though books has no title 
+6 – Give Unique BookIds from Books Table and Borrowers Table 
+7 – Second Oldest Book 
+
+
