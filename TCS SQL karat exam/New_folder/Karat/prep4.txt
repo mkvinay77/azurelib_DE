@@ -1,0 +1,266 @@
+1.our company manages transactions for various financial accounts, to maintain a transaction log and ensure the integrity of the accounts we need to 
+implement a trigger that automatically updates the account balance whenever a new transaction is recorded, each transaction can either be debit or credit . 
+Write a sql server trigger or PL\SQL trigger that updates the accountbalance in the accounts table whenever a new record is inserted into the transcations table 
+the trigger should ensure that the balance does not go below zero for any account and raise an exception id this condition is violated-- 
+also explain the step by step process of the code and give me good understanding of the logic
+
+create or replace procedure update_transactions
+before insert on transactions
+for each row
+DECLARE
+balance accounts.account_balance%type;
+
+BEGIN 
+select account_balance 
+into balance 
+from transactions 
+where account_id=:NEW.account_id;
+
+if UPPER(:NEW.transaction_type)='CREDIT' then  
+   update accounts set account_balance=balance+:NEW.amount where account_id=:NEW.account_id;
+elsif UPPER(:NEW.transaction_type)='DEBIT' then
+	if (balance-:NEW.amount)<0 then
+           raise_application_error(-20000,'Insufficient balance');
+        else
+           update accounts set account_balance=balance-:NEW.amount where account_id=:New.account_id;
+        end if;
+else
+   raise_application_error(-20002,'Invalid transaction');
+end if;
+
+EXCEPTION
+ when no_data_found then
+raise_application_error(-20003,'Account not found');
+
+END Update_transactions;
+
+--------
+2.Create a trigger to update the account balance whenever a new transaction is inserted. 
+There are two tables: an Accounts table containing the account balance and a Transactions 
+table containing the transaction amount. The transaction amount can be either positive or 
+negative. The trigger should check the current account balance against the transaction 
+amount. If the transaction would result in an insufficient balance, raise an application error; 
+otherwise, update the account balance accordingly.
+
+
+if :NEW.amount >0 then
+ update accounts 
+ set account_balance=balance+:NEW.amount 
+ where account_id=:NEW.account_id;
+
+else
+ if balance+:NEW.amount <0 then
+    raise_application_error(-20000,'Insufficient balance');
+ else
+    update accounts 
+    set account_balance = balance+:NEW.amount
+    where account_id=:New.account_id;
+ end if;
+end if;
+END trigger;
+------------
+
+3.
+
+create or replace trigger update_inventory
+before insert on sales
+for each row
+DECLARE
+stock books.inventory%type;
+BEGIN
+select inventory into stock from books where book_id=:NEW.book_id;
+
+if stock-:NEW.quantity_sold <10 then 
+raise_application_error(-20003,'Stock upgrade required');
+
+else
+ update books set inventory= inventory-:NEW.quantity_sold where book_id=:NEW.book_id;
+end if;
+exception
+when no_data_found then
+raise _application_error(-20004,'NO bookid found')
+end update_inventory;
+
+---------------------------------------------
+4.
+
+
+our company is developing a system to manage employee 
+performance bonuses.we need to calculate and update 
+the performance bonus for each employee based on their performance score. 
+the performance bonus is calculated as follows. a base bonus of 
+$100,plus an additional $10 for each performance point above 80. 
+if any employee performance score is 100 or higher ,
+they receive an extra $200 bonus. -
+write a simple PL\SQL Procedure thatse calculates and 
+updates the performance bonus for each employee based 
+pm based on their performance score stored in the employee table .
+the procedure should use control statements to handle 
+the logic for calculating the bonuses.
+
+
+
+create or replace procedure performance_bonus
+as
+bonus number;
+BEGIN
+for rec in (select employee_id,performance_score from employees)
+LOOP
+bonus:=100;
+if rec.performance_score >= 100 then
+bonus:=100+200+(rec.performance_score-80) * 10;
+elsif rec.performance_score >80 then
+bonus:=100+(rec.performance_score-80) *10;
+end if;
+update employees set performance_bonus=bonus where employee_id=rec.employee_id;
+END LOOP;
+COMMIT;
+END performance_bonus;
+------------------------------------
+
+5.
+
+
+our company manages a loyality program for customers. we need to generate monthly statements that calculate
+the total points earned by each customer based on their purchases.points are awarded as follows: 1 point per dollar spent. 
+Additionally,if a customer spends over $500 in a month,they receive a bonus of 50 points. write a simple and under stable PL\SQL procedure in detail 
+explaining each code step in detail that calculates and updates the total loyality points for each customer for a given month. 
+the procedure should use control statements to handle the logic for calculating the points,including the bonus for spending over $500
+ using below customers and purchases tables as reference -- 
+
+create table customers ( customerid int primary key, customername varchar(100), 
+totalpoints int) ; 
+
+create table purchases(purchaseid int primary key, customerid int,purchase amount decimal(10,2), purchasedate date, 
+constraints fk_customer FOREIGN KEY(customerid) references customers(customerid) 
+
+- give me best performance oriented simple and also alternative solutions for the above que
+
+
+
+
+CREATE OR REPLACE PROCEDURE Calculate_loyality_points
+(
+
+p_month IN Number,
+p_year  IN Number
+)
+
+IS
+V_TotalPurchase Number;
+v_TotalPoints  Number;
+
+Cursor c_customers IS
+Select Customerid  
+from Customers;
+
+BEGIN
+--process every customer
+
+For rec IN c_customers LOOP
+
+---calculate total purchase for the month
+
+SELECT NVL(SUM(PurchaseAmount),0)
+Into v_TotalPurchase
+from purchases
+where customerid=rec.customerid
+and extract(MONTH FROM Purchasedate)=p_month
+and extract(year from purchasedate)=p_year;
+
+--- 1 point per dollar spent
+v_TotalPoints :=v_TotalPurchase;
+
+-- Bonus of 50 points if spending exceeds $500
+IF v_TotalPurchase > 500 THEN
+v_TotalPoints := v_TotalPoints + 50;
+END IF;
+
+--UPDATE Customers Loyality points
+
+UPDATE Customers
+Set TotalPoints =v_TotalPoints
+where Customerid=rec.CustomerID;
+
+DBMS_OUTPUT.PUT_LINE('Customer ID:' || rec.CustomerID ||
+                     'Purchase:' || v_TotalPurchase ||
+                     'Points:'|| v_TotalPoints
+);
+
+END LOOP;
+COMMIT;
+
+DBMS_OUTPUT.PUT_LINE('MONTHLY Loyality Points updates successfully.');
+
+END;
+/
+
+(or mine)
+
+create or replace procedure update_loyalty_points
+(purchase_month number,
+ purchase_year number)
+as
+total_purchase number;
+points number;
+BEGIN
+for rec in (select customer_id from customers)
+LOOP
+select NVL(SUM(purchase_amount,0)) into total_purchase 
+from purchases 
+where customer_id=rec.customer_id and extract(MONTH from purchased_date)=purchase_month and extract(year from purchased_date) =purchase_year;
+
+total_points:=total_purchase;
+
+if total_purchase > 500 then
+total_points:=total_points+50;
+end if;
+
+update customers 
+set totalpoints = total_points
+where customer_id = rec.customer_id;
+
+END LOOP;
+COMMIT;
+END update_loyalty_points;
+-----------------------------------------------
+
+6. Create a procedure to calculate and update loyalty points for customers based on their 
+monthly purchase amount. There are two tables: a Customer table containing the 
+customer's loyalty points and a Transactions table containing the customer's purchase 
+transactions across multiple dates. The procedure should group the transactions by 
+customer and month, calculate the total purchase amount for each month, and if the 
+monthly total purchase amount is greater than 500, award the customer 100 loyalty points. 
+The calculated loyalty points should then be updated in the Customer table.
+
+
+create or replace procedure update_loyalty_points
+as
+v_points number;
+BEGIN
+for rec in (
+select customer_id,to_char(purchased_date,'MM-YYYY') as month_year, sum(purchase_amount) as total_amount 
+from transactions 
+group by customer_id,to_char(purchased_date,'MM-YYYY'))
+LOOP
+IF rec.total_spend > 500 THEN
+            v_points := 100;
+        ELSE
+            v_points := 0;
+        END IF;
+
+update customers 
+set points = NVL(points,0) + v_points 
+where customer_id = rec.customer_id;
+
+END LOOP;
+COMMIT;
+END update_loyalty_points
+
+
+
+
+
+
+
+

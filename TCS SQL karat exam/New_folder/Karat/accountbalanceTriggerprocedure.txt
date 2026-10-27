@@ -1,0 +1,167 @@
+our company manages transactions for various financial accounts, to maintain a transaction log and ensure the integrity of the accounts we need to implement a trigger that automatically updates the account balance whenever a new transaction is recorded, each transaction can either be  debit or credit.
+Write a sql server trigger or PL\SQL trigger that updates the accountbalance in the accounts table whenever a new record is inserted into the transcations table
+the trigger should ensure that the balance does not go below zero for any account and raise an exception id this condition is violated--
+also explain the step by step process of the code and give me good understanding of the logic
+
+
+
+
+CREATE OR REPLACE TRIGGER trg_before_transaction
+BEFORE INSERT ON transactions
+FOR EACH ROW
+
+DECLARE
+    v_balance accounts.Accountbalance%TYPE;
+
+--GET CURRENT BALANCE
+BEGIN
+
+    -- Get the current balance of the account
+    SELECT accountbalance
+    INTO v_balance
+    FROM accounts
+    WHERE account_id = :NEW.account_id
+    FOR UPDATE;
+
+    -- If transaction is CREDIT
+    IF UPPER(:NEW.transaction_type) = 'CREDIT' THEN
+
+        UPDATE accounts
+        SET aCCOUNTbalance = aCCOUNTbalance + :NEW.amount
+        WHERE account_id = :NEW.account_id;
+
+    -- If transaction is DEBIT
+    ELSIF UPPER(:NEW.transaction_type) = 'DEBIT' THEN
+
+        -- Check if sufficient balance exists
+        IF (v_balance - :NEW.amount) < 0 THEN
+
+            RAISE_APPLICATION_ERROR
+            (
+                -20001,
+                'Insufficient Balance. Transaction Rejected.'
+            );
+
+       ELSE
+
+             UPDATE Accounts
+             SET AccountBalance = AccountBalance - :NEW.Amount
+             WHERE AccountID = :NEW.AccountID;
+            END IF;
+
+
+ELSE
+
+        RAISE_APPLICATION_ERROR
+        (
+            -20002,
+            'Invalid Transaction Type.'
+        );
+
+    END IF;
+
+END;
+/----------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE OR REPLACE TRIGGER trg_before_transaction
+BEFORE INSERT--- (RUNS FIRST INSERTS LATER)
+ON transactions--(oracle attaches the Trigger to this transaction table)
+FOR EACH ROW(runs each row individually)
+
+DECLARE
+v_balance accounts.balance%TYPE(v_balance is just temporary memory suppose account balance is 5000 oracle stores v_balnce=5000 until trigger finishes and after trigger completes oracle destroys this variable)
+%TYPE---  many begineers ask why not write  number -example balance number(10,2) later dba changes it to balance Number(15,4) if Trigger has NUMBER you need to modify code But %type automatically copies datatype
+if the column type changes later, the trigger automatically uses the new type.
+
+BEGIN-- everything after begin is executable code
+--Get the current balance of the account
+
+SELECT balance  -- read only balance column
+INTO v_balance (example:  read 5000 and store inside v_balance and vbalance=5000
+FROM accounts
+where account_id=:NEW.account_id;(New is pseudo record available in row level triggers.it contains the values of the row currently being inserted or updated,when a row is being inserted, oracle creates a temporary record called :NEW that contains the values of that row
+
+--if transaction is CREDIT
+if condition checks whether a transACTION IS CREDIT OR DEBIT
+IF UPPER(:NEW.transaction_type) = 'CREDIT' THEN
+Upper() converts the text to uppercase
+UPDATE accounts
+SET balance = balance + :NEW.amount
+where account_id = :NEW.account_id;
+
+
+----if transaction is credit
+IF UPPER(:NEW.transaction_type) = 'CREDIT' THEN
+
+UPDATE accounts
+SET balance = balance + :NEW.amount
+where account_id= :NEW.account_id;
+
+---if transaction is Debit
+
+ELSIF UPPER(:NEW.transaction_type) = 'DEBIT' THEN
+
+--check if sufficient balance exists
+
+IF v_balance >= :NEW.amount THEN
+
+UPDATE accounts
+SET balance = balance - :NEW.amount
+where account_id = :NEW.account_id;
+
+ELSE
+
+RAISE_APPLICATION_ERROR
+(
+-2001,'Insufficient Balance. Transaction Rejected.'
+);
+
+END IF;-- FIRST END IF Closes the inner balance check condition;
+
+ELSE
+
+RAISE_APPLICATION_ERROR
+(
+-2002,'Invalid Transaction Type.'
+);
+
+END IF;- the second end if closes the outer transaction type condition
+
+END;-- marks the end of the trigger body

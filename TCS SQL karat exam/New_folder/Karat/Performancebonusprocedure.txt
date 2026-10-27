@@ -1,0 +1,53 @@
+our company is developing a system to manage employee 
+performance bonuses.we need to calculate and update 
+the performance bonus for each employee based on their performance score. 
+the performance bonus is calculated as follows. a base bonus of 
+$100,plus an additional $10 for each performance point above 80. 
+if any employee performance score is 100 or higher ,
+they receive an extra $200 bonus. -
+write a simple PL\SQL Procedure thatse calculates and 
+updates the performance bonus for each employee based 
+pm their performance score stored in the employee table .
+the procedure should use control statements to handle 
+the logic for calculating the bonuses.
+
+
+create or replace procedure Calculateperformancebonus
+as
+v_bonus number;
+
+BEGIN 
+FOR EMP IN(SELECT EMPLOYEEID,PERFORMANCESCORE FROM EMPLOYEE) LOOP
+--base bonus
+
+v_Bonus :=100;
+
+-- extra bonus for score >=100
+
+if emp_performancescore >=100 then
+v_bonus:=v_bonus+((emp.performancescore -80)*10)+200;
+
+--bonus for score above 80
+
+ELSEIF emp.performancescore > 80 then
+v_bonus:=v_bonus+((emp.performancescore - 80)*10);
+
+END IF;
+
+Update employee
+set Bonus =v_bonus
+where employeeid=emp.employeeid
+END LOOP;
+COMMIT;
+END;
+
+
+execute the procedure
+
+BEGIN  
+
+Calculate-performancebonus;
+END;
+/
+
+/

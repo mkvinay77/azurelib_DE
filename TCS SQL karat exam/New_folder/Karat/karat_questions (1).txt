@@ -1,0 +1,82 @@
+1st section-
+
+employee_details
+----------------
+EmpId
+first_name
+last_name
+department
+joining_date
+city
+manager_id
+
+employee_salary
+---------------
+EmpId
+salary
+bonus
+effective_date
+
+1. Display employee and manager IDs
+(select EmpId,manager_id from employee_details)
+
+2.employees who joined in year 2020
+(select EmpId from employee_details where year(joining_date) =2020 )
+
+3.Employee IDs present in either table
+(select EmpId from employee_details 
+    UNION
+  select EmpId from employee_salary)
+
+4.Return all employees from employee_details, even if no salary record exists.
+(SELECT e.*,
+       s.salary
+FROM employee_details e
+LEFT JOIN employee_salary s
+ON e.emp_id = s.emp_id;)
+
+5.Return only employees having a matching salary record
+(SELECT e.emp_id,
+       first_name,
+       last_name,
+       city,
+       salary
+FROM employee_details e
+JOIN employee_salary s
+ON e.emp_id = s.emp_id;)
+
+--------------------------------------------------------------------------
+
+2nd section
+
+1.explain select into in plsql
+
+2.Declaring and initializing collections
+
+3.Function Result Cache and conditions
+
+4.savepoint
+
+5.if named plsql sub-programs got overloaded then
+
+------------------------------------------------
+
+3rd section
+
+1.Create a trigger to update the account balance whenever a new transaction is inserted. 
+There are two tables: an Accounts table containing the account balance and a Transactions 
+table containing the transaction amount. The transaction amount can be either positive or 
+negative. The trigger should check the current account balance against the transaction 
+amount. If the transaction would result in an insufficient balance, raise an application error; 
+otherwise, update the account balance accordingly.
+
+2.our company manages a loyality program for customers. we need to generate monthly statements that calculate
+the total points earned by each customer based on their purchases.points are awarded as follows: 1 point per dollar spent. 
+Additionally,if a customer spends over $500 in a month,they receive a bonus of 50 points. write a simple and under stable PL\SQL procedure in detail 
+explaining each code step in detail that calculates and updates the total loyality points for each customer for a given month. 
+the procedure should use control statements to handle the logic for calculating the points,including the bonus for spending over $500
+ using below customers and purchases tables as reference -- create table customers ( customerid int primary key, customername varchar(100), 
+totalpoints int) ; create table purchases(purchaseid int primary key, customerid int,purchase amount decimal(10,2), purchasedate date, 
+constraints fk_customer FOREIGN KEY(customerid) references customers(customerid) - give me best performance oriented simple and also alternative solutions for the above que
+
+

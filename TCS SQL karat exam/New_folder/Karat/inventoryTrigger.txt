@@ -1,0 +1,31 @@
+table 1 sales: sales_id, book_id, quantity_sold, sale_date)
+table 2 books: book_id, title, author, inentory
+
+CREATE OR REPLACE TRIGGER trg_update_inventory
+BEFORE INSERT ON sales
+FOR EACH ROW
+DECLARE
+    v_inventory books.Inventory%TYPE;
+BEGIN
+    -- Get current inventory
+    SELECT inventory
+    INTO v_inventory
+    FROM books
+    WHERE book_id = :NEW.book_id
+    FOR UPDATE;
+
+    -- Check whether inventory will fall below 10
+    IF (v_inventory - :NEW.quantity_sold) < 10 THEN
+        RAISE_APPLICATION_ERROR(
+            -20001,
+            'Restock Required! Inventory cannot be less than 10.'
+        );
+    END IF;
+
+    -- Update inventory
+    UPDATE Books
+    SET inventory = inventory - :NEW.quantity_sold
+    WHERE book_id = :NEW.book_id;
+
+END;
+/

@@ -1,0 +1,477 @@
+1st section-
+
+employee_details, employee_salary table
+
+1.select EmpId,managerid from employee_details
+
+2.select EmpId from employee_details where year(joining_date) =2020 (employees who are present/joined in year 2020)
+
+3.select EmpId from employees_details
+    UNION
+  select EmpId from employee_salary
+
+4.join on employee_details and employee_salary and select all cols from employee_details and 1 from employee_salary
+
+Join employee_details and employee_salary. Select all columns from employee_details and salary from employee_salary.
+
+SQL
+SELECT d.*,
+s.salary
+FROM employee_details d
+INNER JOIN employee_salary s
+ON d.emp_id = s.emp_id;
+
+5.left join on employee_details and employee_salary and select all cols from employee_details and 1 from employee_salary
+
+------------------------------
+
+2nd section
+
+1.explain select into in plsql
+
+2.Declaring and initializing collections
+
+3.Function cache and conditions
+
+4.savepoint
+
+5.if named plsql sub-programs got overloaded then
+
+------------------------------------------------
+
+3rd section
+
+1.Create a trigger to update the account balance whenever a new transaction is inserted. 
+There are two tables: an Accounts table containing the account balance and a Transactions 
+table containing the transaction amount. The transaction amount can be either positive or 
+negative. The trigger should check the current account balance against the transaction 
+amount. If the transaction would result in an insufficient balance, raise an application error; 
+otherwise, update the account balance accordingly.
+
+2.our company manages a loyality program for customers. we need to generate monthly statements that calculate
+the total points earned by each customer based on their purchases.points are awarded as follows: 1 point per dollar spent. 
+Additionally,if a customer spends over $500 in a month,they receive a bonus of 50 points. write a simple and under stable PL\SQL procedure in detail 
+explaining each code step in detail that calculates and updates the total loyality points for each customer for a given month. 
+the procedure should use control statements to handle the logic for calculating the points,including the bonus for spending over $500
+ using below customers and purchases tables as reference -- create table customers ( customerid int primary key, customername varchar(100), 
+totalpoints int) ; create table purchases(purchaseid int primary key, customerid int,purchase amount decimal(10,2), purchasedate date, 
+constraints fk_customer FOREIGN KEY(customerid) references customers(customerid) - give me best performance oriented simple and also alternative solutions for the above que
+
+
+
+========================================================================================================
+These are good PL/SQL interview questions. Let's understand them in a simple interview-friendly way.
+
+1. SELECT INTO in PL/SQL
+What is SELECT INTO?
+
+In PL/SQL, SELECT INTO is used to fetch data from a table and store it into a variable.
+
+Syntax
+SELECT column_name
+INTO variable_name
+FROM table_name
+WHERE condition;
+
+Example
+
+Employee table:
+
+EMP_ID   EMP_NAME   SALARY
+101      VINAY      50000
+
+
+Code:
+
+DECLARE
+    v_salary NUMBER;
+BEGIN
+
+    SELECT salary
+    INTO v_salary
+    FROM employee
+    WHERE emp_id = 101;
+
+    DBMS_OUTPUT.PUT_LINE(v_salary);
+
+END;
+/
+
+
+Output:
+
+50000
+
+Important Rule
+
+SELECT INTO must return exactly one row.
+
+No Rows
+SELECT salary
+INTO v_salary
+FROM employee
+WHERE emp_id = 999;
+
+
+Error:
+
+NO_DATA_FOUND
+
+Multiple Rows
+SELECT salary
+INTO v_salary
+FROM employee;
+
+
+Error:
+
+TOO_MANY_ROWS
+
+Interview Answer
+
+SELECT INTO is used in PL/SQL to retrieve a single row from a query and store the result into one or more variables.
+
+2. Declaring and Initializing Collections
+What is a Collection?
+
+A collection stores multiple values in a single variable.
+
+Think:
+
+Normal Variable  -> One value
+Collection       -> Multiple values
+
+Nested Table Example
+Declare Type
+DECLARE
+
+   TYPE num_list IS TABLE OF NUMBER;
+
+   v_numbers num_list;
+
+BEGIN
+
+   v_numbers := num_list(10,20,30);
+
+   DBMS_OUTPUT.PUT_LINE(v_numbers(1));
+
+END;
+/
+
+
+Output:
+
+10
+
+Methods
+COUNT
+v_numbers.COUNT
+
+
+Number of elements.
+
+EXTEND
+v_numbers.EXTEND;
+
+
+Adds a new element.
+
+DELETE
+v_numbers.DELETE;
+
+
+Removes elements.
+
+Interview Answer
+
+Collections are PL/SQL data structures that store multiple values. Common collection types are Nested Tables, VARRAYs, and Associative Arrays.
+
+3. Function Cache and Conditions
+
+Interviewers usually mean:
+
+RESULT_CACHE
+
+
+feature in Oracle.
+
+What is Function Result Cache?
+
+Instead of executing the same function repeatedly, Oracle stores the result in memory.
+
+Next time same input comes, Oracle returns the cached result.
+
+Without Cache
+FUNCTION get_tax(p_salary NUMBER)
+RETURN NUMBER
+
+
+Input:
+
+50000
+50000
+50000
+
+
+Function executes:
+
+3 times
+
+With Cache
+CREATE OR REPLACE FUNCTION get_tax
+(
+    p_salary NUMBER
+)
+RETURN NUMBER
+RESULT_CACHE
+IS
+BEGIN
+    RETURN p_salary * 0.10;
+END;
+/
+
+
+Input:
+
+50000
+50000
+50000
+
+
+Function executes:
+
+1 time
+
+
+Remaining values come from cache.
+
+Conditions for Result Cache
+
+Function should:
+
+✅ Return same output for same input
+
+Example:
+
+100 → 10
+200 → 20
+
+
+Avoid:
+
+SYSDATE
+SYSTIMESTAMP
+DBMS_RANDOM
+
+
+because output changes.
+
+Interview Answer
+
+RESULT_CACHE stores function results in memory. When the same input parameters are supplied again, Oracle returns the cached result instead of re-executing the function.
+
+4. SAVEPOINT
+What is SAVEPOINT?
+
+A SAVEPOINT creates a checkpoint inside a transaction.
+
+You can rollback partially to that point instead of rolling back everything.
+
+Example
+BEGIN
+
+    INSERT INTO employee VALUES(1,'A');
+
+    SAVEPOINT sp1;
+
+    INSERT INTO employee VALUES(2,'B');
+
+    SAVEPOINT sp2;
+
+    INSERT INTO employee VALUES(3,'C');
+
+END;
+/
+
+
+Current Data:
+
+1 A
+2 B
+3 C
+
+
+Now:
+
+ROLLBACK TO sp2;
+
+
+Result:
+
+1 A
+2 B
+
+
+Row C removed.
+
+Full Rollback
+ROLLBACK;
+
+
+Everything removed.
+
+Interview Answer
+
+SAVEPOINT is used to mark a point within a transaction. It allows partial rollback to a specific point instead of rolling back the entire transaction.
+
+5. If Named PL/SQL Subprograms Get Overloaded
+What is Overloading?
+
+Same procedure/function name.
+
+Different parameter lists.
+
+Oracle identifies which version to execute based on parameters.
+
+Example Function Overloading
+CREATE OR REPLACE PACKAGE math_pkg
+AS
+
+    FUNCTION calculate
+    (
+        p_num NUMBER
+    )
+    RETURN NUMBER;
+
+    FUNCTION calculate
+    (
+        p_num1 NUMBER,
+        p_num2 NUMBER
+    )
+    RETURN NUMBER;
+
+END;
+/
+
+Implementation
+CREATE OR REPLACE PACKAGE BODY math_pkg
+AS
+
+    FUNCTION calculate
+    (
+        p_num NUMBER
+    )
+    RETURN NUMBER
+    IS
+    BEGIN
+        RETURN p_num * 2;
+    END;
+
+    FUNCTION calculate
+    (
+        p_num1 NUMBER,
+        p_num2 NUMBER
+    )
+    RETURN NUMBER
+    IS
+    BEGIN
+        RETURN p_num1 + p_num2;
+    END;
+
+END;
+/
+
+Calls
+
+Version 1:
+
+SELECT math_pkg.calculate(10)
+FROM dual;
+
+
+Output:
+
+20
+
+
+Version 2:
+
+SELECT math_pkg.calculate(10,20)
+FROM dual;
+
+
+Output:
+
+30
+
+
+Oracle automatically chooses the correct version.
+
+Rules for Overloading
+
+✅ Different number of parameters
+
+func(p_num)
+func(p_num1,p_num2)
+
+
+✅ Different parameter types
+
+func(NUMBER)
+func(VARCHAR2)
+
+
+❌ Return type alone cannot overload
+
+Invalid:
+
+FUNCTION f(p NUMBER)
+RETURN NUMBER;
+
+FUNCTION f(p NUMBER)
+RETURN VARCHAR2;
+
+
+Oracle cannot determine which one to call.
+
+Interview Answer
+
+Overloading means creating multiple procedures or functions with the same name but different parameter lists. Oracle resolves the correct subprogram based on the number, datatype, or mode of parameters.
+
+Quick Revision
+SELECT INTO
+SELECT salary
+INTO v_salary
+FROM emp;
+
+
+Fetches one row into variables.
+
+Collections
+TYPE num_list IS TABLE OF NUMBER;
+
+
+Stores multiple values.
+
+Function Cache
+RESULT_CACHE
+
+
+Stores function results for repeated inputs.
+
+SAVEPOINT
+SAVEPOINT sp1;
+ROLLBACK TO sp1;
+
+
+Partial rollback.
+
+Overloading
+func(10)
+func(10,20)
+
+
+Same name, different parameters.
+
+These 5 are very commonly asked Oracle PL/SQL interview topics, especially for 2-6 years experience.
+
